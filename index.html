@@ -177,10 +177,15 @@
   .storico-list{ display:flex; flex-direction:column; gap:6px; }
   .storico-item{
     display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--line);
-    border-radius:8px; padding:9px 12px; font-size:13px;
+    border-radius:8px; padding:9px 8px 9px 12px; font-size:13px; gap:8px;
   }
-  .storico-item .d{ color: var(--text-dim); }
+  .storico-item .d{ color: var(--text-dim); flex:1; }
   .storico-item .t{ font-family:'Barlow Condensed'; font-weight:700; font-size:15px; }
+  .storico-del{
+    background:none; border:none; color:var(--text-faint); font-size:18px; line-height:1; cursor:pointer;
+    padding:4px 8px; border-radius:6px;
+  }
+  .storico-del:hover{ color:var(--accent); background:rgba(228,87,46,0.12); }
   .storico-empty{ color: var(--text-faint); font-size:13px; padding: 6px 2px; }
 
   .note-box{ background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; font-size:14px; color:var(--text-dim); line-height:1.5; }
@@ -360,6 +365,10 @@
       </div>
     </div>
     <button class="btn btn-primary" id="save-record-btn">Salva record</button>
+    <label style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--text-dim);">
+      <input type="checkbox" id="correggi-check" style="width:auto;">
+      Sto correggendo un errore (non aggiungere allo storico)
+    </label>
     <div id="delta-note-box"></div>
   </div>
 
@@ -840,11 +849,21 @@ function renderStorico(s){
     list.innerHTML = '<div class="storico-empty">Nessun record precedente registrato.</div>';
     return;
   }
-  [...s.storico].reverse().forEach(h=>{
+  const indexed = s.storico.map((h, idx) => ({h, idx}));
+  indexed.reverse().forEach(({h, idx}) => {
     const item = document.createElement('div');
     item.className = 'storico-item';
-    item.innerHTML = `<span class="d">${formatDateIt(h.data)}</span><span class="t">${formatDuration(h.tempo_sec)}</span>`;
+    item.innerHTML = `<span class="d">${formatDateIt(h.data)}</span><span class="t">${formatDuration(h.tempo_sec)}</span><button class="storico-del" data-idx="${idx}" title="Elimina voce sbagliata">&times;</button>`;
     list.appendChild(item);
+  });
+  list.querySelectorAll('.storico-del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(!confirm('Eliminare questa voce dallo storico?')) return;
+      const idx = parseInt(btn.dataset.idx);
+      s.storico.splice(idx, 1);
+      saveData();
+      renderStorico(s);
+    });
   });
 }
 document.getElementById('save-record-btn').addEventListener('click', ()=>{
@@ -856,8 +875,9 @@ document.getElementById('save-record-btn').addEventListener('click', ()=>{
     showToast('Inserisci data e tempo validi (es. 25:34)');
     return;
   }
+  const isCorrezione = document.getElementById('correggi-check').checked;
   const oldSec = s.record_sec;
-  if(s.record_data || s.record_sec!=null){
+  if(!isCorrezione && (s.record_data || s.record_sec!=null)){
     s.storico = s.storico || [];
     s.storico.push({data: s.record_data, tempo_sec: s.record_sec});
   }
@@ -867,14 +887,15 @@ document.getElementById('save-record-btn').addEventListener('click', ()=>{
   saveData();
 
   const box = document.getElementById('delta-note-box');
-  if(oldSec!=null){
+  if(!isCorrezione && oldSec!=null){
     const delta = newSec - oldSec;
     const sign = delta<=0 ? '-' : '+';
     box.innerHTML = `<div class="delta-note ${delta<=0?'better':'worse'}">${sign}${formatDuration(Math.abs(delta))} rispetto al record precedente</div>`;
   } else {
     box.innerHTML = '';
   }
-  showToast('Record salvato');
+  document.getElementById('correggi-check').checked = false;
+  showToast(isCorrezione ? 'Record corretto' : 'Record salvato');
   renderStorico(s);
 });
 
