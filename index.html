@@ -349,6 +349,7 @@
         <button class="btn btn-primary" id="save-edit-btn">Salva modifiche</button>
         <button class="btn btn-ghost" id="cancel-edit-btn">Annulla</button>
       </div>
+      <button class="btn btn-ghost" id="delete-climb-btn" style="margin-top:8px; color:var(--accent); border-color:var(--accent-dim);">Elimina salita</button>
     </div>
   </div>
 
@@ -936,6 +937,16 @@ function updateEditDiffPreview(){
 }
 document.getElementById('edit-toggle-btn').addEventListener('click', openEditPanel);
 document.getElementById('cancel-edit-btn').addEventListener('click', closeEditPanel);
+document.getElementById('delete-climb-btn').addEventListener('click', ()=>{
+  const s = getClimb(currentClimbRef);
+  if(!confirm(`Eliminare definitivamente "${s.nome}"? L'operazione non è reversibile (a meno di avere un backup JSON).`)) return;
+  const prov = DATA[currentClimbRef.provCode];
+  prov.salite = prov.salite.filter(c => c.id !== currentClimbRef.id);
+  saveData();
+  showToast('Salita eliminata');
+  showView('lista');
+  renderList();
+});
 ['e-pendenza','e-distanza'].forEach(id=>{
   document.getElementById(id).addEventListener('input', updateEditDiffPreview);
 });
