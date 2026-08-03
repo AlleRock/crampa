@@ -74,7 +74,7 @@
 
   /* --- LISTA --- */
   .province-select-wrap{ margin-bottom:14px; }
-  select, input[type=text], input[type=number], input[type=date], input[type=url]{
+  select, input[type=text], input[type=number], input[type=date], input[type=url], input[type=password]{
     width:100%; background: var(--surface); border:1px solid var(--line); color:var(--text);
     padding:11px 12px; border-radius: var(--radius); font-size:15px; font-family:'Inter';
     appearance:none; -webkit-appearance:none;
@@ -475,6 +475,17 @@
     <p>Copia tutti i dati negli appunti per un backup veloce da telefono, senza dover salvare un file.</p>
     <button class="btn btn-ghost btn-small" id="clipboard-btn">Copia negli appunti</button>
   </div>
+  <div class="section-label">Sincronizzazione tra dispositivi</div>
+  <div class="settings-block">
+    <p>Sincronizza i dati con il repository GitHub: si controlla automaticamente all'apertura dell'app, così tutti i dispositivi vedono le stesse modifiche senza dover esportare/importare a mano.</p>
+    <label class="field-label">Token GitHub (fine-grained, permesso Contents: Read and write, limitato a questo repo)</label>
+    <input type="password" id="gh-token-input" placeholder="github_pat_...">
+    <div class="btn-row" style="margin-top:8px;">
+      <button class="btn btn-primary btn-small" id="gh-token-save-btn">Salva token</button>
+      <button class="btn btn-ghost btn-small" id="gh-sync-now-btn">Sincronizza ora</button>
+    </div>
+    <p id="gh-sync-status" style="margin-top:10px; font-size:12px; color:var(--text-faint);">-</p>
+  </div>
   <div class="settings-block">
     <p style="color:var(--accent);">Zona pericolosa: ripristina i dati originali di seed, cancellando tutte le modifiche fatte finora.</p>
     <button class="btn btn-ghost btn-small" id="reset-btn">Ripristina dati di base</button>
@@ -508,6 +519,136 @@ function loadData(){
 }
 function saveData(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  markUpdatedAndSync();
+}
+function saveDataLocalOnly(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+}
+
+// ---------- SINCRONIZZAZIONE GITHUB ----------
+const GH_OWNER = 'AlleRock';
+const GH_REPO = 'crampa';
+const GH_PATH = 'data.json';
+const GH_BRANCH = 'main';
+const GH_TOKEN_KEY = 'crampa_gh_token_v1';
+const SYNC_META_KEY = 'crampa_sync_meta_v1';
+
+function getGhToken(){ return localStorage.getItem(GH_TOKEN_KEY) || ''; }
+function setGhToken(t){ if(t) localStorage.setItem(GH_TOKEN_KEY, t); else localStorage.removeItem(GH_TOKEN_KEY); }
+function loadSyncMeta(){
+  try{ return JSON.parse(localStorage.getItem(SYNC_META_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveSyncMeta(meta){ localStorage.setItem(SYNC_META_KEY, JSON.stringify(meta)); }
+
+function b64EncodeUnicode(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b=> binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+function b64DecodeUnicode(str){
+  const binary = atob(str.replace(/\n/g,''));
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function ghHeaders(){
+  const h = { 'Accept': 'application/vnd.github+json' };
+  const token = getGhToken();
+  if(token) h['Authorization'] = 'Bearer ' + token;
+  return h;
+}
+function updateSyncStatusUI(){
+  const el = document.getElementById('gh-sync-status');
+  if(!el) return;
+  const meta = loadSyncMeta();
+  const tokenSet = !!getGhToken();
+  const when = meta.updatedAt ? new Date(meta.updatedAt).toLocaleString('it-IT') : 'mai';
+  el.textContent = (tokenSet ? 'Token configurato' : 'Token non configurato') + ' — ultimo aggiornamento dati: ' + when;
+}
+
+async function pushToGitHub(opts){
+  opts = opts || {};
+  const token = getGhToken();
+  if(!token){
+    if(!opts.silent) showToast('Configura il token GitHub per sincronizzare');
+    return;
+  }
+  const meta = loadSyncMeta();
+  const payload = { updatedAt: meta.updatedAt || new Date().toISOString(), data: DATA };
+  const body = {
+    message: 'Aggiornamento dati Crampa',
+    content: b64EncodeUnicode(JSON.stringify(payload, null, 2)),
+    branch: GH_BRANCH
+  };
+  if(meta.sha) body.sha = meta.sha;
+  try{
+    const res = await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_PATH, {
+      method: 'PUT',
+      headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()),
+      body: JSON.stringify(body)
+    });
+    if(res.status === 409){
+      showToast('Sync fallita: dati aggiornati da un altro dispositivo. Riprova da Impostazioni.');
+      return;
+    }
+    if(!res.ok) throw new Error('http ' + res.status);
+    const json = await res.json();
+    meta.sha = json.content.sha;
+    saveSyncMeta(meta);
+    updateSyncStatusUI();
+  }catch(err){
+    showToast('Sincronizzazione fallita. Riprova più tardi.');
+  }
+}
+
+async function pullFromGitHub(opts){
+  opts = opts || {};
+  const meta = loadSyncMeta();
+  try{
+    const res = await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_PATH+'?ref='+GH_BRANCH, { headers: ghHeaders() });
+    if(res.status === 404){
+      meta.sha = null;
+      saveSyncMeta(meta);
+      await pushToGitHub({silent:true});
+      updateSyncStatusUI();
+      return;
+    }
+    if(!res.ok) throw new Error('http ' + res.status);
+    const json = await res.json();
+    const remote = JSON.parse(b64DecodeUnicode(json.content));
+    meta.sha = json.sha;
+    const remoteUpdated = remote.updatedAt || null;
+    const localUpdated = meta.updatedAt || null;
+    if(remoteUpdated && (!localUpdated || remoteUpdated > localUpdated)){
+      DATA = remote.data;
+      saveDataLocalOnly();
+      meta.updatedAt = remoteUpdated;
+      saveSyncMeta(meta);
+      if(!currentProvince || !DATA[currentProvince]) currentProvince = Object.keys(DATA)[0];
+      populateProvinceSelect();
+      populateFormProvince();
+      renderList();
+      if(!opts.silent) showToast('Dati aggiornati da GitHub');
+    } else {
+      saveSyncMeta(meta);
+      if(localUpdated && (!remoteUpdated || localUpdated > remoteUpdated)){
+        await pushToGitHub({silent:true});
+      } else if(!opts.silent){
+        showToast('Dati già aggiornati');
+      }
+    }
+    updateSyncStatusUI();
+  }catch(err){
+    if(!opts.silent) showToast('Sincronizzazione non riuscita (offline?)');
+  }
+}
+
+function markUpdatedAndSync(){
+  const meta = loadSyncMeta();
+  meta.updatedAt = new Date().toISOString();
+  saveSyncMeta(meta);
+  pushToGitHub();
 }
 
 let DATA = loadData();
@@ -1138,6 +1279,16 @@ document.getElementById('clipboard-btn').addEventListener('click', async ()=>{
     showToast('Impossibile copiare');
   }
 });
+document.getElementById('gh-token-save-btn').addEventListener('click', ()=>{
+  const val = document.getElementById('gh-token-input').value.trim();
+  setGhToken(val);
+  document.getElementById('gh-token-input').value = '';
+  showToast(val ? 'Token salvato' : 'Token rimosso');
+  updateSyncStatusUI();
+});
+document.getElementById('gh-sync-now-btn').addEventListener('click', ()=>{
+  pullFromGitHub({silent:false});
+});
 document.getElementById('reset-btn').addEventListener('click', ()=>{
   if(confirm('Sei sicuro? Tutte le modifiche fatte finora andranno perse.')){
     DATA = JSON.parse(JSON.stringify(SEED));
@@ -1152,6 +1303,8 @@ document.getElementById('reset-btn').addEventListener('click', ()=>{
 populateProvinceSelect();
 populateFormProvince();
 renderList();
+updateSyncStatusUI();
+pullFromGitHub({silent:true});
 
 // PWA service worker (app-shell caching, vedi sw.js)
 if('serviceWorker' in navigator){
