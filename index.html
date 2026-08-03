@@ -397,6 +397,21 @@
     <div>
       <label class="field-label">Provincia</label>
       <select id="f-provincia"></select>
+      <button type="button" class="btn btn-ghost btn-small" id="new-province-toggle" style="margin-top:6px;">+ Nuova provincia</button>
+      <div id="new-province-form" style="display:none; margin-top:8px; flex-direction:column; gap:8px;">
+        <div>
+          <label class="field-label">Sigla (es. IM)</label>
+          <input type="text" id="np-sigla" maxlength="2" placeholder="IM" style="text-transform:uppercase;">
+        </div>
+        <div>
+          <label class="field-label">Nome provincia</label>
+          <input type="text" id="np-nome" placeholder="es. Imperia">
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary btn-small" id="np-confirm">Crea provincia</button>
+          <button type="button" class="btn btn-ghost btn-small" id="np-cancel">Annulla</button>
+        </div>
+      </div>
     </div>
     <div>
       <label class="field-label">Nome salita (arrivo)</label>
@@ -984,6 +999,45 @@ function populateFormProvince(){
     sel.appendChild(opt);
   });
 }
+document.getElementById('new-province-toggle').addEventListener('click', ()=>{
+  const form = document.getElementById('new-province-form');
+  const showing = form.style.display === 'flex';
+  form.style.display = showing ? 'none' : 'flex';
+  if(!showing){ document.getElementById('np-sigla').focus(); }
+});
+document.getElementById('np-cancel').addEventListener('click', ()=>{
+  document.getElementById('new-province-form').style.display = 'none';
+  document.getElementById('np-sigla').value = '';
+  document.getElementById('np-nome').value = '';
+});
+document.getElementById('np-sigla').addEventListener('input', e=>{
+  e.target.value = e.target.value.toUpperCase();
+});
+document.getElementById('np-confirm').addEventListener('click', ()=>{
+  const sigla = document.getElementById('np-sigla').value.trim().toUpperCase();
+  const nome = document.getElementById('np-nome').value.trim();
+  if(!/^[A-Z]{2}$/.test(sigla)){
+    showToast('Sigla non valida (2 lettere)');
+    return;
+  }
+  if(!nome){
+    showToast('Inserisci il nome della provincia');
+    return;
+  }
+  if(DATA[sigla]){
+    showToast('Provincia già esistente');
+    return;
+  }
+  DATA[sigla] = { nome, salite: [] };
+  saveData();
+  populateProvinceSelect();
+  populateFormProvince();
+  document.getElementById('f-provincia').value = sigla;
+  document.getElementById('np-sigla').value = '';
+  document.getElementById('np-nome').value = '';
+  document.getElementById('new-province-form').style.display = 'none';
+  showToast('Provincia "' + nome + '" creata');
+});
 function computeDifficolta(pendenza, distanza){
   if(isNaN(pendenza) || isNaN(distanza)) return null;
   return Math.round((distanza * pendenza * pendenza) * 100) / 100;
