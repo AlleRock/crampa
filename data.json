@@ -1,27 +1,9 @@
 {
-  "updatedAt": "2026-08-03T22:01:25.000Z",
+  "updatedAt": "2026-08-03T22:14:13.124Z",
   "data": {
     "GE": {
       "nome": "Genova",
       "salite": [
-        {
-          "id": 1,
-          "nome": "Ageno",
-          "localita_partenza": "Recco",
-          "distanza_km": 4.05,
-          "alt_partenza": 14,
-          "alt_arrivo": 278,
-          "dislivello": 264,
-          "pendenza_media": 6.05,
-          "difficolta": 148.24,
-          "fatta": true,
-          "record_sec": 1761,
-          "record_data": "2022-02-26",
-          "note": null,
-          "storico": [],
-          "link_mappa": null,
-          "gpx_file": "Ageno (Recco).gpx"
-        },
         {
           "id": 2,
           "nome": "Allegrezze",
