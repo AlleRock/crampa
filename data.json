@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-04T21:15:33.779Z",
+  "updatedAt": "2026-08-04T21:18:10.179Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -3267,9 +3267,9 @@
           "dislivello": 1079,
           "pendenza_media": 3.4,
           "difficolta": 366.8,
-          "fatta": false,
-          "record_sec": null,
-          "record_data": null,
+          "fatta": true,
+          "record_sec": 10920,
+          "record_data": "2024-08-20",
           "note": null,
           "storico": [],
           "link_mappa": null,
