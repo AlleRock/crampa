@@ -567,12 +567,19 @@ function updateSyncStatusUI(){
   el.textContent = (tokenSet ? 'Token configurato' : 'Token non configurato') + ' — ultimo aggiornamento dati: ' + when;
 }
 
-let pushQueue = Promise.resolve();
+let syncQueue = Promise.resolve();
+function enqueueSync(fn){
+  // Tutte le operazioni di sync (import, salvataggi, pull automatico all'apertura,
+  // pull manuale da "Sincronizza ora"...) passano da qui, una alla volta:
+  // così non possono mai accavallarsi e scontrarsi tra loro.
+  syncQueue = syncQueue.then(fn, fn).catch(()=>{});
+  return syncQueue;
+}
 function pushToGitHub(opts){
-  // Le chiamate vengono messe in coda una dietro l'altra: evita che due salvataggi
-  // ravvicinati sullo stesso dispositivo usino lo stesso "sha" e si scontrino a vicenda.
-  pushQueue = pushQueue.then(()=> doPushToGitHub(opts)).catch(()=>{});
-  return pushQueue;
+  return enqueueSync(()=> doPushToGitHub(opts));
+}
+function pullFromGitHub(opts){
+  return enqueueSync(()=> doPullFromGitHub(opts));
 }
 
 async function doPushToGitHub(opts){
@@ -602,7 +609,8 @@ async function doPushToGitHub(opts){
         return;
       }
       // Lo sha che avevamo era scaduto (es. push precedente andato a buon fine nel frattempo):
-      // lo aggiorniamo e ritentiamo automaticamente, una sola volta.
+      // lo aggiorniamo e ritentiamo automaticamente, una sola volta. Chiamata diretta
+      // (non passa da pushToGitHub) perché siamo già dentro la coda.
       await resyncShaThenRetry(opts);
       return;
     }
@@ -611,6 +619,7 @@ async function doPushToGitHub(opts){
     meta.sha = json.content.sha;
     saveSyncMeta(meta);
     updateSyncStatusUI();
+    if(!opts.silent) showToast('✓ Sincronizzato su GitHub');
   }catch(err){
     if(!opts.silent) showToast('Sincronizzazione fallita. Riprova più tardi.');
   }
@@ -648,7 +657,7 @@ async function resyncShaThenRetry(opts){
   }
 }
 
-async function pullFromGitHub(opts){
+async function doPullFromGitHub(opts){
   opts = opts || {};
   const meta = loadSyncMeta();
   try{
@@ -656,7 +665,7 @@ async function pullFromGitHub(opts){
     if(res.status === 404){
       meta.sha = null;
       saveSyncMeta(meta);
-      await pushToGitHub({silent:true});
+      await doPushToGitHub({silent:true});
       updateSyncStatusUI();
       return;
     }
@@ -679,7 +688,7 @@ async function pullFromGitHub(opts){
     } else {
       saveSyncMeta(meta);
       if(localUpdated && (!remoteUpdated || localUpdated > remoteUpdated)){
-        await pushToGitHub({silent:true});
+        await doPushToGitHub({silent:true});
       } else if(!opts.silent){
         showToast('Dati già aggiornati');
       }
