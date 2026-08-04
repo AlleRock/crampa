@@ -558,13 +558,23 @@ function ghHeaders(){
   if(token) h['Authorization'] = 'Bearer ' + token;
   return h;
 }
+function saveSyncError(msg){
+  const meta = loadSyncMeta();
+  meta.lastError = msg ? { msg, at: new Date().toISOString() } : null;
+  saveSyncMeta(meta);
+  updateSyncStatusUI();
+}
 function updateSyncStatusUI(){
   const el = document.getElementById('gh-sync-status');
   if(!el) return;
   const meta = loadSyncMeta();
   const tokenSet = !!getGhToken();
   const when = meta.updatedAt ? new Date(meta.updatedAt).toLocaleString('it-IT') : 'mai';
-  el.textContent = (tokenSet ? 'Token configurato' : 'Token non configurato') + ' — ultimo aggiornamento dati: ' + when;
+  let text = (tokenSet ? 'Token configurato' : 'Token non configurato') + ' — ultimo aggiornamento dati: ' + when;
+  if(meta.lastError){
+    text += ' | Ultimo errore (' + new Date(meta.lastError.at).toLocaleString('it-IT') + '): ' + meta.lastError.msg;
+  }
+  el.textContent = text;
 }
 
 let syncQueue = Promise.resolve();
@@ -605,6 +615,7 @@ async function doPushToGitHub(opts){
     });
     if(res.status === 409){
       if(opts._retried){
+        saveSyncError('conflitto persistente (409 anche dopo il retry)');
         showToast('Sync fallita: dati aggiornati da un altro dispositivo. Riprova da Impostazioni.');
         return;
       }
@@ -614,14 +625,20 @@ async function doPushToGitHub(opts){
       await resyncShaThenRetry(opts);
       return;
     }
-    if(!res.ok) throw new Error('http ' + res.status);
+    if(!res.ok){
+      let detail = 'HTTP ' + res.status;
+      try{ const errJson = await res.json(); if(errJson.message) detail += ': ' + errJson.message; }catch(e){}
+      throw new Error(detail);
+    }
     const json = await res.json();
     meta.sha = json.content.sha;
     saveSyncMeta(meta);
+    saveSyncError(null);
     updateSyncStatusUI();
     if(!opts.silent) showToast('✓ Sincronizzato su GitHub');
   }catch(err){
-    if(!opts.silent) showToast('Sincronizzazione fallita. Riprova più tardi.');
+    saveSyncError(err && err.message ? err.message : 'errore sconosciuto');
+    if(!opts.silent) showToast('Sincronizzazione fallita: ' + (err && err.message ? err.message : 'errore sconosciuto'));
   }
 }
 
@@ -653,6 +670,7 @@ async function resyncShaThenRetry(opts){
     saveSyncMeta(meta);
     await doPushToGitHub(Object.assign({}, opts, { _retried: true }));
   }catch(err){
+    saveSyncError('resync fallito: ' + (err && err.message ? err.message : 'errore sconosciuto'));
     showToast('Sincronizzazione fallita. Riprova da Impostazioni.');
   }
 }
