@@ -718,7 +718,7 @@ let DATA = loadData();
       if(fresh !== s.difficolta){ s.difficolta = fresh; changed = true; }
     });
   });
-  if(changed) saveData();
+  if(changed) saveDataLocalOnly();
 })();
 function getSortedProvinceCodes(){
   return Object.keys(DATA).sort((a,b)=>{
