@@ -1,9 +1,27 @@
 {
-  "updatedAt": "2026-08-03T22:14:13.124Z",
+  "updatedAt": "2026-08-03T22:16:16.819Z",
   "data": {
     "GE": {
       "nome": "Genova",
       "salite": [
+        {
+          "id": 1,
+          "nome": "Ageno",
+          "localita_partenza": "Recco",
+          "distanza_km": 4.05,
+          "alt_partenza": 14,
+          "alt_arrivo": 278,
+          "dislivello": 264,
+          "pendenza_media": 6.05,
+          "difficolta": 148.24,
+          "fatta": true,
+          "record_sec": 1761,
+          "record_data": "2022-02-26",
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Ageno (Recco).gpx"
+        },
         {
           "id": 2,
           "nome": "Allegrezze",
@@ -519,7 +537,7 @@
           "pendenza_media": 5.7,
           "difficolta": 170.25,
           "fatta": true,
-          "record_sec": 3010,
+          "record_sec": 2004,
           "record_data": "2023-07-01",
           "note": null,
           "storico": [],
@@ -537,8 +555,8 @@
           "pendenza_media": 7,
           "difficolta": 298.41,
           "fatta": true,
-          "record_sec": 2481,
-          "record_data": "2023-05-13",
+          "record_sec": 3010,
+          "record_data": "2021-11-27",
           "note": null,
           "storico": [],
           "link_mappa": null,
@@ -663,8 +681,8 @@
           "pendenza_media": 3.9,
           "difficolta": 27.07,
           "fatta": true,
-          "record_sec": 376,
-          "record_data": "2026-08-04",
+          "record_sec": null,
+          "record_data": null,
           "note": null,
           "storico": [],
           "link_mappa": null,
@@ -717,8 +735,8 @@
           "pendenza_media": 5.9,
           "difficolta": 306.33,
           "fatta": true,
-          "record_sec": 2593,
-          "record_data": "2021-07-27",
+          "record_sec": null,
+          "record_data": null,
           "note": null,
           "storico": [],
           "link_mappa": null,
@@ -843,7 +861,7 @@
           "pendenza_media": 9.4,
           "difficolta": 198.81,
           "fatta": true,
-          "record_sec": 1029,
+          "record_sec": 1711,
           "record_data": "2024-11-09",
           "note": null,
           "storico": [],
@@ -1041,15 +1059,10 @@
           "pendenza_media": 3.7,
           "difficolta": 212.06,
           "fatta": true,
-          "record_sec": 4383,
-          "record_data": "2026-04-04",
+          "record_sec": 2395,
+          "record_data": "2025-03-08",
           "note": null,
-          "storico": [
-            {
-              "data": "2025-03-08",
-              "tempo_sec": 4809
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Giutte Vetta (Voltri).gpx"
         },
@@ -1262,7 +1275,7 @@
           "pendenza_media": 4.8,
           "difficolta": 47.69,
           "fatta": true,
-          "record_sec": 605,
+          "record_sec": 663,
           "record_data": "2017-06-16",
           "note": null,
           "storico": [],
@@ -1550,15 +1563,10 @@
           "pendenza_media": 4,
           "difficolta": 46.88,
           "fatta": true,
-          "record_sec": 660,
-          "record_data": "2026-04-04",
+          "record_sec": 866,
+          "record_data": "2025-07-06",
           "note": null,
-          "storico": [
-            {
-              "data": "2025-07-06",
-              "tempo_sec": 866
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Passo Del Turchino (Masone).gpx"
         },
@@ -1609,15 +1617,10 @@
           "pendenza_media": 9.1,
           "difficolta": 481.13,
           "fatta": true,
-          "record_sec": 2794,
-          "record_data": "2026-08-01",
+          "record_sec": 3104,
+          "record_data": "2022-07-09",
           "note": null,
-          "storico": [
-            {
-              "data": "2022-07-09",
-              "tempo_sec": 3104
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Passo Dell`Incisa (Prosementino).gpx"
         },
@@ -1776,15 +1779,10 @@
           "pendenza_media": 8.8,
           "difficolta": 439.08,
           "fatta": true,
-          "record_sec": 3015,
-          "record_data": "2023-08-29",
+          "record_sec": 3510,
+          "record_data": "2021-12-04",
           "note": null,
-          "storico": [
-            {
-              "data": "2021-12-04",
-              "tempo_sec": 3510
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Passo Della Crocetta (Cicagna).gpx"
         },
@@ -1853,15 +1851,10 @@
           "pendenza_media": 3.6,
           "difficolta": 273.72,
           "fatta": true,
-          "record_sec": 5503,
-          "record_data": "2026-06-27",
+          "record_sec": 5995,
+          "record_data": "2025-06-14",
           "note": null,
-          "storico": [
-            {
-              "data": "2025-06-14",
-              "tempo_sec": 5995
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Passo Della Forcella (Borgonovo Ligure).gpx"
         },
@@ -1876,7 +1869,7 @@
           "pendenza_media": 3.3,
           "difficolta": 182.73,
           "fatta": true,
-          "record_sec": 3610,
+          "record_sec": 3612,
           "record_data": "2019-02-21",
           "note": null,
           "storico": [],
@@ -1935,8 +1928,8 @@
           "pendenza_media": 7.2,
           "difficolta": 297.04,
           "fatta": true,
-          "record_sec": 2547,
-          "record_data": "2023-06-17",
+          "record_sec": 3231,
+          "record_data": "2024-11-30",
           "note": null,
           "storico": [],
           "link_mappa": null,
@@ -1953,15 +1946,10 @@
           "pendenza_media": 4.4,
           "difficolta": 224.96,
           "fatta": true,
-          "record_sec": 3231,
-          "record_data": "2024-11-30",
+          "record_sec": 3253,
+          "record_data": "2022-06-02",
           "note": null,
-          "storico": [
-            {
-              "data": "2022-06-02",
-              "tempo_sec": 3253
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Passo Della Spinarola (Recco).gpx"
         },
@@ -2012,7 +2000,7 @@
           "pendenza_media": 7,
           "difficolta": 108.29,
           "fatta": true,
-          "record_sec": 928,
+          "record_sec": 969,
           "record_data": "2017-02-14",
           "note": null,
           "storico": [],
@@ -2030,7 +2018,7 @@
           "pendenza_media": 7.1,
           "difficolta": 213.74,
           "fatta": true,
-          "record_sec": 1844,
+          "record_sec": 1696,
           "record_data": "2017-02-14",
           "note": null,
           "storico": [],
@@ -2354,7 +2342,7 @@
           "pendenza_media": 4.4,
           "difficolta": 116.74,
           "fatta": true,
-          "record_sec": 1946,
+          "record_sec": 1956,
           "record_data": "2024-11-23",
           "note": null,
           "storico": [],
@@ -2462,7 +2450,7 @@
           "pendenza_media": 4.6,
           "difficolta": 50.78,
           "fatta": true,
-          "record_sec": 787,
+          "record_sec": 788,
           "record_data": "2023-02-18",
           "note": null,
           "storico": [],
@@ -2606,12 +2594,30 @@
           "pendenza_media": 3.6,
           "difficolta": 49.9,
           "fatta": true,
-          "record_sec": 908,
-          "record_data": "2026-03-28",
+          "record_sec": 900,
+          "record_data": "2019-06-12",
           "note": null,
           "storico": [],
           "link_mappa": null,
           "gpx_file": "Torriglia (Laccio).gpx"
+        },
+        {
+          "id": 146,
+          "nome": "Santa Maria del Porto",
+          "localita_partenza": "Torriglia",
+          "distanza_km": 5.25,
+          "alt_partenza": 818,
+          "alt_arrivo": 1048,
+          "dislivello": 230,
+          "pendenza_media": 4.5,
+          "difficolta": 106.31,
+          "fatta": true,
+          "record_sec": 1818,
+          "record_data": "2019-05-02",
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Torriglia, via Obbi (Laccio).gpx"
         },
         {
           "id": 147,
@@ -2642,7 +2648,7 @@
           "pendenza_media": 5.9,
           "difficolta": 139.24,
           "fatta": true,
-          "record_sec": 1288,
+          "record_sec": 1278,
           "record_data": "2018-10-25",
           "note": null,
           "storico": [],
@@ -2678,15 +2684,10 @@
           "pendenza_media": 5.1,
           "difficolta": 96.5,
           "fatta": true,
-          "record_sec": 991,
-          "record_data": "2026-07-22",
+          "record_sec": 994,
+          "record_data": "2022-07-19",
           "note": null,
-          "storico": [
-            {
-              "data": "2022-07-19",
-              "tempo_sec": 994
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Valico Di Torrazza (Piccarello).gpx"
         },
@@ -2743,24 +2744,6 @@
           "storico": [],
           "link_mappa": null,
           "gpx_file": "Verzemma (Recco).gpx"
-        },
-        {
-          "id": 187,
-          "nome": "Valico Di Torrazza",
-          "localita_partenza": "San Gottardo",
-          "distanza_km": 4.53,
-          "alt_partenza": 56,
-          "alt_arrivo": 343,
-          "dislivello": 287,
-          "pendenza_media": 6.1,
-          "difficolta": 168.56,
-          "fatta": true,
-          "record_sec": 1295,
-          "record_data": "2021-08-11",
-          "note": null,
-          "storico": [],
-          "link_mappa": null,
-          "gpx_file": "Valico Di Torrazza (San Gottardo).gpx"
         }
       ]
     },
@@ -2796,15 +2779,10 @@
           "pendenza_media": 4.1,
           "difficolta": 414.53,
           "fatta": true,
-          "record_sec": 8045,
-          "record_data": "2025-08-30",
+          "record_sec": 8555,
+          "record_data": "2022-06-24",
           "note": null,
-          "storico": [
-            {
-              "data": "2022-06-24",
-              "tempo_sec": 8555
-            }
-          ],
+          "storico": [],
           "link_mappa": null,
           "gpx_file": "Capanne Di Cosola (Traschio).gpx"
         },
@@ -2843,6 +2821,24 @@
           "storico": [],
           "link_mappa": null,
           "gpx_file": "Valico Di San Fermo (Dovanelli).gpx"
+        },
+        {
+          "id": 158,
+          "nome": "Valico Di San Fermo",
+          "localita_partenza": "Vobbia",
+          "distanza_km": 10.3,
+          "alt_partenza": 458,
+          "alt_arrivo": 1134,
+          "dislivello": 676,
+          "pendenza_media": 6.6,
+          "difficolta": 448.67,
+          "fatta": true,
+          "record_sec": 4152,
+          "record_data": "2021-08-21",
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Valico Di San Fermo (Vobbia).gpx"
         }
       ]
     },
@@ -2878,7 +2874,7 @@
           "pendenza_media": 6.3,
           "difficolta": 788.64,
           "fatta": true,
-          "record_sec": 9582,
+          "record_sec": 9606,
           "record_data": "2017-08-30",
           "note": null,
           "storico": [],
@@ -2991,7 +2987,7 @@
           "pendenza_media": 7.6,
           "difficolta": 747.41,
           "fatta": true,
-          "record_sec": 6595,
+          "record_sec": 8555,
           "record_data": "2021-09-03",
           "note": null,
           "storico": [],
@@ -3045,7 +3041,7 @@
           "pendenza_media": 7.7,
           "difficolta": 69.96,
           "fatta": true,
-          "record_sec": 515,
+          "record_sec": 510,
           "record_data": "2017-09-09",
           "note": null,
           "storico": [],
@@ -3207,10 +3203,6 @@
           "gpx_file": "Passo Pordoi (Alba Di Canazei).gpx"
         }
       ]
-    },
-    "PC": {
-      "nome": "Piacenza",
-      "salite": []
     }
   }
 }
