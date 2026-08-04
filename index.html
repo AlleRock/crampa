@@ -567,7 +567,15 @@ function updateSyncStatusUI(){
   el.textContent = (tokenSet ? 'Token configurato' : 'Token non configurato') + ' — ultimo aggiornamento dati: ' + when;
 }
 
-async function pushToGitHub(opts){
+let pushQueue = Promise.resolve();
+function pushToGitHub(opts){
+  // Le chiamate vengono messe in coda una dietro l'altra: evita che due salvataggi
+  // ravvicinati sullo stesso dispositivo usino lo stesso "sha" e si scontrino a vicenda.
+  pushQueue = pushQueue.then(()=> doPushToGitHub(opts)).catch(()=>{});
+  return pushQueue;
+}
+
+async function doPushToGitHub(opts){
   opts = opts || {};
   const token = getGhToken();
   if(!token){
@@ -589,7 +597,13 @@ async function pushToGitHub(opts){
       body: JSON.stringify(body)
     });
     if(res.status === 409){
-      showToast('Sync fallita: dati aggiornati da un altro dispositivo. Riprova da Impostazioni.');
+      if(opts._retried){
+        showToast('Sync fallita: dati aggiornati da un altro dispositivo. Riprova da Impostazioni.');
+        return;
+      }
+      // Lo sha che avevamo era scaduto (es. push precedente andato a buon fine nel frattempo):
+      // lo aggiorniamo e ritentiamo automaticamente, una sola volta.
+      await resyncShaThenRetry(opts);
       return;
     }
     if(!res.ok) throw new Error('http ' + res.status);
@@ -598,7 +612,39 @@ async function pushToGitHub(opts){
     saveSyncMeta(meta);
     updateSyncStatusUI();
   }catch(err){
-    showToast('Sincronizzazione fallita. Riprova più tardi.');
+    if(!opts.silent) showToast('Sincronizzazione fallita. Riprova più tardi.');
+  }
+}
+
+async function resyncShaThenRetry(opts){
+  try{
+    const res = await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_PATH+'?ref='+GH_BRANCH, { headers: ghHeaders() });
+    if(!res.ok) throw new Error('http ' + res.status);
+    const json = await res.json();
+    const remote = JSON.parse(b64DecodeUnicode(json.content));
+    const meta = loadSyncMeta();
+    meta.sha = json.sha;
+    const remoteUpdated = remote.updatedAt || null;
+    const localUpdated = meta.updatedAt || null;
+    if(remoteUpdated && localUpdated && remoteUpdated > localUpdated){
+      // Nel frattempo un altro dispositivo ha scritto una versione più recente della nostra:
+      // la adottiamo per non perdere quella, e la nostra ultima modifica potrebbe non essere salvata.
+      DATA = remote.data;
+      saveDataLocalOnly();
+      meta.updatedAt = remoteUpdated;
+      saveSyncMeta(meta);
+      if(!currentProvince || !DATA[currentProvince]) currentProvince = getSortedProvinceCodes()[0];
+      populateProvinceSelect();
+      populateFormProvince();
+      renderList();
+      showToast('Un altro dispositivo ha aggiornato i dati nel frattempo: adottati i suoi');
+      updateSyncStatusUI();
+      return;
+    }
+    saveSyncMeta(meta);
+    await doPushToGitHub(Object.assign({}, opts, { _retried: true }));
+  }catch(err){
+    showToast('Sincronizzazione fallita. Riprova da Impostazioni.');
   }
 }
 
@@ -625,7 +671,7 @@ async function pullFromGitHub(opts){
       saveDataLocalOnly();
       meta.updatedAt = remoteUpdated;
       saveSyncMeta(meta);
-      if(!currentProvince || !DATA[currentProvince]) currentProvince = Object.keys(DATA)[0];
+      if(!currentProvince || !DATA[currentProvince]) currentProvince = getSortedProvinceCodes()[0];
       populateProvinceSelect();
       populateFormProvince();
       renderList();
@@ -665,7 +711,14 @@ let DATA = loadData();
   });
   if(changed) saveData();
 })();
-let currentProvince = Object.keys(DATA)[0];
+function getSortedProvinceCodes(){
+  return Object.keys(DATA).sort((a,b)=>{
+    if(a==='GE') return -1;
+    if(b==='GE') return 1;
+    return DATA[a].nome.localeCompare(DATA[b].nome, 'it');
+  });
+}
+let currentProvince = getSortedProvinceCodes()[0];
 let currentClimbRef = null; // {provCode, id}
 let currentFilter = 'tutte';
 
@@ -863,7 +916,7 @@ document.getElementById('back-btn').addEventListener('click', ()=>{
 function populateProvinceSelect(){
   const sel = document.getElementById('province-select');
   sel.innerHTML = '';
-  Object.keys(DATA).forEach(code=>{
+  getSortedProvinceCodes().forEach(code=>{
     const opt = document.createElement('option');
     opt.value = code;
     opt.textContent = DATA[code].nome + ' (' + DATA[code].salite.length + ')';
@@ -1134,7 +1187,7 @@ document.getElementById('save-edit-btn').addEventListener('click', ()=>{
 function populateFormProvince(){
   const sel = document.getElementById('f-provincia');
   sel.innerHTML = '';
-  Object.keys(DATA).forEach(code=>{
+  getSortedProvinceCodes().forEach(code=>{
     const opt = document.createElement('option');
     opt.value = code; opt.textContent = DATA[code].nome;
     sel.appendChild(opt);
