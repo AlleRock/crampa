@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-04T06:27:17.172Z",
+  "updatedAt": "2026-08-04T17:06:58.029Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -3228,7 +3228,26 @@
     },
     "PC": {
       "nome": "Piacenza",
-      "salite": []
+      "salite": [
+        {
+          "id": 188,
+          "nome": "Capanne Di Cosola",
+          "localita_partenza": "Traschio",
+          "distanza_km": 24.66,
+          "alt_partenza": 455,
+          "alt_arrivo": 1468,
+          "dislivello": 1013,
+          "pendenza_media": 4.1,
+          "difficolta": 414.53,
+          "fatta": false,
+          "record_sec": null,
+          "record_data": null,
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Capanne Di Cosola (Traschio).gpx"
+        }
+      ]
     }
   }
 }
