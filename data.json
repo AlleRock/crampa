@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-04T18:35:52.220Z",
+  "updatedAt": "2026-08-04T21:15:33.779Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -3256,7 +3256,26 @@
     },
     "PV": {
       "nome": "Pavia",
-      "salite": []
+      "salite": [
+        {
+          "id": 189,
+          "nome": "Capanne Di Cosola",
+          "localita_partenza": "Pianellette",
+          "distanza_km": 31.73,
+          "alt_partenza": 394,
+          "alt_arrivo": 1473,
+          "dislivello": 1079,
+          "pendenza_media": 3.4,
+          "difficolta": 366.8,
+          "fatta": false,
+          "record_sec": null,
+          "record_data": null,
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Capanne Di Cosola (Pianellette).gpx"
+        }
+      ]
     }
   }
 }
