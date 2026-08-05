@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-05T21:51:14.191Z",
+  "updatedAt": "2026-08-05T21:52:00.501Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -3273,7 +3273,7 @@
           "note": null,
           "storico": [],
           "link_mappa": null,
-          "gpx_file": null
+          "gpx_file": "Capanne Di Cosola (Pianellette).gpx"
         }
       ]
     }
