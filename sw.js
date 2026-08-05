@@ -1,4 +1,4 @@
-const CACHE_NAME = 'crampa-cache-v8';
+const CACHE_NAME = 'crampa-cache-v9';
 const APP_SHELL = [
   './',
   './index.html',
