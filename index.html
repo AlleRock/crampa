@@ -600,6 +600,7 @@ async function doPushToGitHub(opts){
     return;
   }
   const meta = loadSyncMeta();
+  const triedSha = meta.sha || null;
   const payload = { updatedAt: meta.updatedAt || new Date().toISOString(), data: DATA };
   const body = {
     message: 'Aggiornamento dati Crampa',
@@ -615,7 +616,12 @@ async function doPushToGitHub(opts){
     });
     if(res.status === 409){
       if(opts._retried){
-        saveSyncError('conflitto persistente (409 anche dopo il retry)');
+        let serverMsg = '';
+        try{ const errJson = await res.json(); if(errJson.message) serverMsg = errJson.message; }catch(e){}
+        const dbg = opts._debug || {};
+        saveSyncError('conflitto persistente (409' + (serverMsg?': '+serverMsg:'') + ') — sha tentato: ' + (triedSha||'null').slice(0,7)
+          + ' | mio updatedAt: ' + (meta.updatedAt||'-')
+          + ' | remoto al momento del retry: sha ' + (dbg.remoteSha||'?').slice(0,7) + ', updatedAt ' + (dbg.remoteUpdated||'-'));
         showToast('Sync fallita: dati aggiornati da un altro dispositivo. Riprova da Impostazioni.');
         return;
       }
@@ -668,7 +674,7 @@ async function resyncShaThenRetry(opts){
       return;
     }
     saveSyncMeta(meta);
-    await doPushToGitHub(Object.assign({}, opts, { _retried: true }));
+    await doPushToGitHub(Object.assign({}, opts, { _retried: true, _debug: { remoteSha: json.sha, remoteUpdated: remoteUpdated } }));
   }catch(err){
     saveSyncError('resync fallito: ' + (err && err.message ? err.message : 'errore sconosciuto'));
     showToast('Sincronizzazione fallita. Riprova da Impostazioni.');
@@ -713,7 +719,9 @@ async function doPullFromGitHub(opts){
     }
     updateSyncStatusUI();
   }catch(err){
-    if(!opts.silent) showToast('Sincronizzazione non riuscita (offline?)');
+    const detail = err && err.message ? err.message : 'errore sconosciuto';
+    saveSyncError('pull fallito: ' + detail);
+    if(!opts.silent) showToast('Sincronizzazione non riuscita: ' + detail);
   }
 }
 
