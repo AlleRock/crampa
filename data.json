@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T17:32:24.413Z",
+  "updatedAt": "2026-08-14T17:33:25.193Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -2963,8 +2963,8 @@
           "localita_partenza": "Varazze",
           "distanza_km": 22.15,
           "alt_partenza": 8,
-          "alt_arrivo": 1279,
-          "dislivello": 1271,
+          "alt_arrivo": 1266,
+          "dislivello": 1258,
           "pendenza_media": 5.7,
           "difficolta": 719.65,
           "fatta": false,
