@@ -341,6 +341,10 @@
         <label class="field-label">File GPX (nome file nella cartella /gpx, opzionale)</label>
         <input type="text" id="e-gpx" placeholder="Nome Salita (Partenza).gpx">
       </div>
+      <div>
+        <label class="field-label">Provincia</label>
+        <select id="e-provincia"></select>
+      </div>
       <div class="diff-preview">
         <div class="v" id="e-diff-preview">-</div>
         <div class="l">Difficoltà ricalcolata</div>
@@ -1155,6 +1159,14 @@ function openEditPanel(){
   document.getElementById('e-alta').value = s.alt_arrivo ?? '';
   document.getElementById('e-note').value = s.note || '';
   document.getElementById('e-gpx').value = s.gpx_file || '';
+  const provSel = document.getElementById('e-provincia');
+  provSel.innerHTML = '';
+  getSortedProvinceCodes().forEach(code=>{
+    const opt = document.createElement('option');
+    opt.value = code; opt.textContent = DATA[code].nome;
+    provSel.appendChild(opt);
+  });
+  provSel.value = currentClimbRef.provCode;
   updateEditDiffPreview();
   document.getElementById('stat-grid-view').style.display = 'none';
   document.getElementById('edit-toggle-btn').style.display = 'none';
@@ -1198,6 +1210,15 @@ document.getElementById('save-edit-btn').addEventListener('click', ()=>{
   const s = getClimb(currentClimbRef);
   const nome = document.getElementById('e-nome').value.trim();
   if(!nome){ showToast('Il nome non può essere vuoto'); return; }
+  const newProvCode = document.getElementById('e-provincia').value;
+  const oldProvCode = currentClimbRef.provCode;
+  if(newProvCode && newProvCode !== oldProvCode){
+    const oldProv = DATA[oldProvCode];
+    const newProv = DATA[newProvCode];
+    oldProv.salite = oldProv.salite.filter(c => c.id !== s.id);
+    newProv.salite.push(s);
+    currentClimbRef = {provCode: newProvCode, id: s.id};
+  }
   s.nome = nome;
   s.localita_partenza = document.getElementById('e-partenza').value.trim() || null;
   const dist = parseFloat(document.getElementById('e-distanza').value);
