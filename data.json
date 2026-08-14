@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T19:33:19.282Z",
+  "updatedAt": "2026-08-14T19:38:46.060Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -2968,10 +2968,15 @@
           "pendenza_media": 4.4,
           "difficolta": 226.32,
           "fatta": true,
-          "record_sec": 4117,
-          "record_data": "2023-08-05",
+          "record_sec": 3610,
+          "record_data": "2026-08-14",
           "note": null,
-          "storico": [],
+          "storico": [
+            {
+              "data": "2023-08-05",
+              "tempo_sec": 4117
+            }
+          ],
           "link_mappa": null,
           "gpx_file": "Passo Del Faiallo (San Pietro D'Olba).gpx"
         }
