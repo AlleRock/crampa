@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T19:27:19.612Z",
+  "updatedAt": "2026-08-14T19:33:19.282Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -1394,24 +1394,6 @@
           "storico": [],
           "link_mappa": null,
           "gpx_file": null
-        },
-        {
-          "id": 78,
-          "nome": "Passo del Faiallo",
-          "localita_partenza": "San Pietro D'Olba",
-          "distanza_km": 11.69,
-          "alt_partenza": 533,
-          "alt_arrivo": 1061,
-          "dislivello": 528,
-          "pendenza_media": 4.4,
-          "difficolta": 226.32,
-          "fatta": true,
-          "record_sec": 4117,
-          "record_data": "2023-08-05",
-          "note": null,
-          "storico": [],
-          "link_mappa": null,
-          "gpx_file": "Passo Del Faiallo (San Pietro D'Olba).gpx"
         },
         {
           "id": 79,
@@ -2974,6 +2956,24 @@
           "storico": [],
           "link_mappa": null,
           "gpx_file": "Monte Beigua 2026 (Varazze).gpx"
+        },
+        {
+          "id": 78,
+          "nome": "Passo del Faiallo",
+          "localita_partenza": "San Pietro D'Olba",
+          "distanza_km": 11.69,
+          "alt_partenza": 533,
+          "alt_arrivo": 1061,
+          "dislivello": 528,
+          "pendenza_media": 4.4,
+          "difficolta": 226.32,
+          "fatta": true,
+          "record_sec": 4117,
+          "record_data": "2023-08-05",
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": "Passo Del Faiallo (San Pietro D'Olba).gpx"
         }
       ]
     },
