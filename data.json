@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T18:09:06.975Z",
+  "updatedAt": "2026-08-14T18:10:13.643Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -2973,7 +2973,7 @@
           "note": null,
           "storico": [],
           "link_mappa": null,
-          "gpx_file": "Monte Beigua 2026 (Varazze).gpx"
+          "gpx_file": null
         }
       ]
     },
