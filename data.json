@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T17:38:31.565Z",
+  "updatedAt": "2026-08-14T17:39:39.096Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -2959,21 +2959,21 @@
         },
         {
           "id": 190,
-          "nome": "Monte Beigua 2017",
+          "nome": "Monte Beigua 2026",
           "localita_partenza": "Varazze",
-          "distanza_km": 19.87,
+          "distanza_km": 22.15,
           "alt_partenza": 8,
           "alt_arrivo": 1274,
           "dislivello": 1266,
-          "pendenza_media": 6.3,
-          "difficolta": 788.64,
+          "pendenza_media": 5.7,
+          "difficolta": 719.65,
           "fatta": false,
           "record_sec": null,
           "record_data": null,
           "note": null,
           "storico": [],
           "link_mappa": null,
-          "gpx_file": "Monte Beigua 2017 (Varazze).gpx"
+          "gpx_file": "Monte Beigua 2026 (Varazze).gpx"
         }
       ]
     },
