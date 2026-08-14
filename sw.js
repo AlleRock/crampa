@@ -1,4 +1,4 @@
-const CACHE_NAME = 'crampa-cache-v9';
+const CACHE_NAME = 'crampa-cache-v10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -42,8 +42,10 @@ self.addEventListener('fetch', event => {
   }
   event.respondWith(
     caches.match(req).then(cached => cached || fetch(req).then(res => {
-      const resClone = res.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(req, resClone));
+      if (res.ok) {
+        const resClone = res.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(req, resClone));
+      }
       return res;
     }).catch(() => cached))
   );
