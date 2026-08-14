@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-05T21:52:00.501Z",
+  "updatedAt": "2026-08-14T17:32:24.413Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -2956,6 +2956,24 @@
           "storico": [],
           "link_mappa": null,
           "gpx_file": "Manie Vetta  (Noli).gpx"
+        },
+        {
+          "id": 190,
+          "nome": "Monte Beigua 2026",
+          "localita_partenza": "Varazze",
+          "distanza_km": 22.15,
+          "alt_partenza": 8,
+          "alt_arrivo": 1279,
+          "dislivello": 1271,
+          "pendenza_media": 5.7,
+          "difficolta": 719.65,
+          "fatta": false,
+          "record_sec": null,
+          "record_data": null,
+          "note": null,
+          "storico": [],
+          "link_mappa": null,
+          "gpx_file": null
         }
       ]
     },
