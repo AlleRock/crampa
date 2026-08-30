@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T19:38:46.060Z",
+  "updatedAt": "2026-08-30T06:09:15.938Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -1876,10 +1876,15 @@
           "pendenza_media": 3.3,
           "difficolta": 182.73,
           "fatta": true,
-          "record_sec": 3610,
-          "record_data": "2019-02-21",
+          "record_sec": 3556,
+          "record_data": "2026-08-29",
           "note": null,
-          "storico": [],
+          "storico": [
+            {
+              "data": "2019-02-21",
+              "tempo_sec": 3610
+            }
+          ],
           "link_mappa": null,
           "gpx_file": "Passo Della Scoffera (Cavassolo - Davagna).gpx"
         },
