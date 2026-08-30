@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-30T06:09:15.938Z",
+  "updatedAt": "2026-08-30T06:09:56.528Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -1867,7 +1867,7 @@
         },
         {
           "id": 104,
-          "nome": "Passo della Scoffera",
+          "nome": "Passo Della Scoffera",
           "localita_partenza": "Cavassolo - Davagna",
           "distanza_km": 16.78,
           "alt_partenza": 128,
