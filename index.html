@@ -16,6 +16,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf-autotable.min.js"></script>
 <style>
   :root{
     --bg: #181B1F;
@@ -478,6 +480,10 @@
   <div class="settings-block">
     <p>Copia tutti i dati negli appunti per un backup veloce da telefono, senza dover salvare un file.</p>
     <button class="btn btn-ghost btn-small" id="clipboard-btn">Copia negli appunti</button>
+  </div>
+  <div class="settings-block">
+    <p>Esporta un PDF con tutti i record attuali, divisi per provincia e per anno del record. Le salite non ancora fatte non vengono incluse.</p>
+    <button class="btn btn-ghost btn-small" id="export-pdf-btn">Esporta PDF record</button>
   </div>
   <div class="section-label">Sincronizzazione tra dispositivi</div>
   <div class="settings-block">
@@ -1388,6 +1394,96 @@ document.getElementById('clipboard-btn').addEventListener('click', async ()=>{
     showToast('Impossibile copiare');
   }
 });
+document.getElementById('export-pdf-btn').addEventListener('click', ()=>{
+  try{
+    exportRecordsPdf();
+    showToast('PDF esportato');
+  }catch(err){
+    console.error(err);
+    showToast('Errore nella generazione del PDF (serve connessione la prima volta, per caricare le librerie)');
+  }
+});
+function exportRecordsPdf(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const marginX = 14;
+  let y = 18;
+
+  const provCodes = getSortedProvinceCodes();
+  const salitePerProv = {};
+  let totRecord = 0;
+  provCodes.forEach(code=>{
+    const salite = DATA[code].salite.filter(s=>s.fatta && s.record_sec!=null && s.record_data);
+    salitePerProv[code] = salite;
+    totRecord += salite.length;
+  });
+
+  doc.setFontSize(18);
+  doc.setTextColor(26,26,46);
+  doc.text('Crampa \u2014 Archivio Record Salite', marginX, y);
+  y += 7;
+  doc.setFontSize(10);
+  doc.setTextColor(85,85,119);
+  const oggi = new Date().toLocaleDateString('it-IT');
+  doc.text(`Esportato il ${oggi} \u2014 ${totRecord} salite con record attuale, divise per provincia e anno del record.`, marginX, y);
+  y += 8;
+
+  provCodes.forEach(code=>{
+    const salite = salitePerProv[code];
+    if(salite.length===0) return;
+    const prov = DATA[code];
+
+    if(y > pageH - 30){ doc.addPage(); y = 18; }
+    doc.setFillColor(43,58,103);
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(14);
+    doc.rect(marginX-2, y-6, pageW-2*marginX+4, 9, 'F');
+    doc.text(`${prov.nome} (${code})`, marginX, y);
+    y += 10;
+
+    const byYear = {};
+    salite.forEach(s=>{
+      const yr = s.record_data.slice(0,4);
+      (byYear[yr] = byYear[yr] || []).push(s);
+    });
+    const years = Object.keys(byYear).sort((a,b)=>b-a);
+
+    years.forEach(yr=>{
+      if(y > pageH - 25){ doc.addPage(); y = 18; }
+      doc.setTextColor(192,57,43);
+      doc.setFontSize(11);
+      doc.text(`Record datati ${yr}`, marginX, y);
+      y += 2;
+
+      const rows = byYear[yr]
+        .sort((a,b)=>a.nome.localeCompare(b.nome, 'it'))
+        .map(s=>[
+          s.nome,
+          s.localita_partenza || '\u2014',
+          s.distanza_km!=null ? s.distanza_km.toFixed(2) : '\u2014',
+          s.dislivello!=null ? s.dislivello+' m' : '\u2014',
+          s.pendenza_media!=null ? s.pendenza_media.toFixed(1) : '\u2014',
+          formatDuration(s.record_sec),
+          formatDateIt(s.record_data)
+        ]);
+
+      doc.autoTable({
+        startY: y,
+        margin: {left: marginX, right: marginX},
+        head: [['Salita','Partenza','Km','Disliv.','Pend. %','Tempo','Data']],
+        body: rows,
+        styles: {fontSize:8, cellPadding:2},
+        headStyles: {fillColor:[232,232,240], textColor:[30,30,30]},
+        alternateRowStyles: {fillColor:[247,247,251]}
+      });
+      y = doc.lastAutoTable.finalY + 8;
+    });
+  });
+
+  doc.save('crampa-record-' + new Date().toISOString().slice(0,10) + '.pdf');
+}
 document.getElementById('gh-token-save-btn').addEventListener('click', ()=>{
   const val = document.getElementById('gh-token-input').value.trim();
   setGhToken(val);
