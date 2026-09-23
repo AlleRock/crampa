@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-23T18:08:56.832Z",
+  "updatedAt": "2026-09-23T18:13:04.970Z",
   "data": {
     "GE": {
       "nome": "Genova",
@@ -3150,10 +3150,15 @@
           "pendenza_media": 4.3,
           "difficolta": 105.95,
           "fatta": true,
-          "record_sec": 1734,
-          "record_data": "2016-09-12",
+          "record_sec": 1670,
+          "record_data": "2026-09-11",
           "note": null,
-          "storico": [],
+          "storico": [
+            {
+              "data": "2016-09-12",
+              "tempo_sec": 1734
+            }
+          ],
           "link_mappa": null,
           "gpx_file": "Passo Gardena (Pian De Gralba).gpx"
         },
